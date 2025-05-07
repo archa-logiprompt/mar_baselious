@@ -67,7 +67,7 @@
                 
                     <div class="box box-info" id="timetable">
                         <div class="box-header with-border">
-                            <h3 class="box-title"><i class="fa fa-users"></i>Weekly Calendar New</h3>
+                            <h3 class="box-title"><i class="fa fa-users"></i>Weekly Calendar New2</h3>
                         </div>
                         <div class="box-body">
                             <div class="row print" >
