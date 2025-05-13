@@ -26,7 +26,19 @@ class Leavetypes_model extends CI_model {
         $query = $this->db->get('leave_types');
         return $query->result_array();
     }
+    public function updateLeaveType($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('leave_types', $data);
+    }
+    public function isLeaveTypeUnique($type, $id)
+{
+    $this->db->where('type', $type);
+    $this->db->where('id !=', $id); 
+    $query = $this->db->get('leave_types');
+    return $query->num_rows() === 0;
+}
 
+    
     public function deleteLeaveType($id) {
 
         $this->db->where('id', $id);

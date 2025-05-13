@@ -1,15 +1,17 @@
 <?php
 
-class Staff extends Admin_Controller {
+class Staff extends Admin_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
         $this->config->load("payroll");
         $this->load->library('Enc_lib');
         $this->load->library('mailsmsconf');
         $this->load->model("staff_model");
-		$this->load->model("superviser_model");
+        $this->load->model("superviser_model");
         //  $this->load->model("timeline_model");
         $this->load->model("leaverequest_model");
         $this->contract_type = $this->config->item('contracttype');
@@ -23,7 +25,7 @@ class Staff extends Admin_Controller {
 
     function leave_report()
     {
-       
+
         if (!$this->rbac->hasPrivilege('leave_report', 'can_view')) {
             access_denied();
         }
@@ -31,7 +33,7 @@ class Staff extends Admin_Controller {
         $this->session->set_userdata('sub_menu', 'admin/payroll/payrollreport');
         $staff_list = $this->input->post("staff_list");
         $type = $this->input->post("type");
-       
+
         $resultlist = $this->staff_model->get();
         $data['resultlist'] = $resultlist;
         $leavetype = $this->staff_model->getLeaveType();
@@ -65,7 +67,7 @@ class Staff extends Admin_Controller {
         $this->form_validation->set_rules('staff', 'Staff', 'required');
         $this->form_validation->set_rules('leave_type_id', 'Leave type', 'required');
         $userdata = $this->customlib->getUserData();
-       
+
         $resultlist = $this->staff_model->get();
         $data['resultlist'] = $resultlist;
         $leavetype = $this->staff_model->getLeaveType();
@@ -74,13 +76,13 @@ class Staff extends Admin_Controller {
         // var_dump( $data['leavetype']);exit;
         if ($this->form_validation->run() == FALSE) {
             // $data['CallList'] = $CallList;
-           
+
             $this->load->view('layout/header');
-            $this->load->view('admin/staff/staffleave',$data);
+            $this->load->view('admin/staff/staffleave', $data);
             $this->load->view('layout/footer');
         } else {
-            $admin=$this->session->userdata('admin');
-            $centre_id=$admin['centre_id'];
+            $admin = $this->session->userdata('admin');
+            $centre_id = $admin['centre_id'];
             $staff_id = $this->input->post('staff');
             $leave_type_id = $this->input->post('leave_type_id');
             $new_alloted_leave = $this->input->post('alloted_leave');
@@ -99,29 +101,29 @@ class Staff extends Admin_Controller {
                 'description'    => $description,
             );
 
-   
-            $leave_id = $this->staff_model->addleave($staff_leave); 
-            
-        //    var_dump( $userdata);exit;
+
+            $leave_id = $this->staff_model->addleave($staff_leave);
+
+            //    var_dump( $userdata);exit;
             $user_id = $userdata['name'];
-            
-           
+
+
             $log = array(
                 'user_id'          => $user_id,
                 'staff_id'         => $staff_id,
                 'leave_type_id'    => $leave_type_id,
-                'old_alloted_leave'=> $old_alloted_leave,
-                'new_alloted_leave'=> $new_alloted_leave,
+                'old_alloted_leave' => $old_alloted_leave,
+                'new_alloted_leave' => $new_alloted_leave,
                 'action'           => 'Leave Updated',
                 'leave_id'         => $leave_id,
                 'created_at'       => date('Y-m-d H:i:s')
             );
-            
-         
+
+
             $this->db->insert('staff_leave_log', $log);
-            
-			
-            
+
+
+
 
             $this->session->set_flashdata('msg', '<div class="alert alert-success"> Visitors added successfully</div>');
             redirect('admin/staff/staff_leave');
@@ -169,7 +171,8 @@ class Staff extends Admin_Controller {
             $this->Visitors_model->update($id, $visitors);
         }
     }
-    function index() {
+    function index()
+    {
         if (!$this->rbac->hasPrivilege('staff', 'can_view')) {
             access_denied();
         }
@@ -213,7 +216,8 @@ class Staff extends Admin_Controller {
         $this->load->view('layout/footer');
     }
 
-    function disablestafflist() {
+    function disablestafflist()
+    {
 
         if (!$this->rbac->hasPrivilege('disable_staff', 'can_view')) {
             access_denied();
@@ -227,7 +231,7 @@ class Staff extends Admin_Controller {
 
         $search = $this->input->post("search");
         $search_text = $this->input->post('search_text');
-        
+
         if (isset($search)) {
             $resultlist = $this->staff_model->searchFullText($search_text, 0);
             $data['resultlist'] = $resultlist;
@@ -259,7 +263,8 @@ class Staff extends Admin_Controller {
         $this->load->view('layout/footer', $data);
     }
 
-    function profile($id) {
+    function profile($id)
+    {
         if (!$this->rbac->hasPrivilege('staff', 'can_view')) {
             access_denied();
         }
@@ -284,12 +289,12 @@ class Staff extends Admin_Controller {
         $salary = $this->payroll_model->getSalaryDetails($id);
         $attendencetypes = $this->staffattendancemodel->getStaffAttendanceType();
         $data['attendencetypeslist'] = $attendencetypes;
-        $staff_speciality= $this->staff_model->getSpeciality($id);
-		$data['speciality']=$staff_speciality;
-		$staff_training= $this->staff_model->getTraining($id);
-		$data['training']=$staff_training;
-		$staff_certificate= $this->staff_model->getCertificate($id);
-		$data['certificate']=$staff_certificate;
+        $staff_speciality = $this->staff_model->getSpeciality($id);
+        $data['speciality'] = $staff_speciality;
+        $staff_training = $this->staff_model->getTraining($id);
+        $data['training'] = $staff_training;
+        $staff_certificate = $this->staff_model->getCertificate($id);
+        $data['certificate'] = $staff_certificate;
         $i = 0;
         $leaveDetail = array();
         foreach ($alloted_leavetype as $key => $value) {
@@ -322,7 +327,7 @@ class Staff extends Admin_Controller {
         // } else {
         //     $year = $centenary . $year_second_substring;
         // }
-            $year = date("Y");
+        $year = date("Y");
 
         $j = 0;
         for ($n = 1; $n <= 31; $n++) {
@@ -371,7 +376,8 @@ class Staff extends Admin_Controller {
         $this->load->view('layout/footer', $data);
     }
 
-    function countAttendance($st_month, $no_of_months, $emp) {
+    function countAttendance($st_month, $no_of_months, $emp)
+    {
 
         $record = array();
         for ($i = 1; $i <= 1; $i++) {
@@ -394,7 +400,8 @@ class Staff extends Admin_Controller {
         return $record;
     }
 
-    function getSession() {
+    function getSession()
+    {
         $session = $this->session_model->getAllSession();
         $data = array();
         $session_array = $this->session->has_userdata('session_array');
@@ -411,7 +418,8 @@ class Staff extends Admin_Controller {
         return $data;
     }
 
-    public function getSessionMonthDropdown() {
+    public function getSessionMonthDropdown()
+    {
         $startMonth = $this->setting_model->getStartMonth();
         $array = array();
         for ($m = $startMonth; $m <= $startMonth + 11; $m++) {
@@ -421,7 +429,8 @@ class Staff extends Admin_Controller {
         return $array;
     }
 
-    public function download($staff_id, $doc) {
+    public function download($staff_id, $doc)
+    {
 
         $this->load->helper('download');
         $filepath = "./uploads/staff_documents/$staff_id/" . $this->uri->segment(5);
@@ -431,18 +440,20 @@ class Staff extends Admin_Controller {
         force_download($name, $data);
     }
 
-    function doc_delete($id, $doc, $file) {
+    function doc_delete($id, $doc, $file)
+    {
         $this->staff_model->doc_delete($id, $doc, $file);
         $this->session->set_flashdata('msg', '<i class="fa fa-check-square-o" aria-hidden="true"></i> Document Deleted Successfully');
         redirect('admin/staff/profile/' . $id);
     }
 
-    function ajax_attendance($id) {
+    function ajax_attendance($id)
+    {
         $this->load->model("staffattendancemodel");
         $attendencetypes = $this->staffattendancemodel->getStaffAttendanceType();
         $data['attendencetypeslist'] = $attendencetypes;
         $year = $this->input->post("year");
-        $data["year"] = $year ;
+        $data["year"] = $year;
         if (!empty($year)) {
 
             $monthlist = $this->customlib->getMonthDropdown();
@@ -490,7 +501,8 @@ class Staff extends Admin_Controller {
         }
     }
 
-    function create() {
+    function create()
+    {
         $this->session->set_userdata('top_menu', 'HR');
         $this->session->set_userdata('sub_menu', 'admin/staff');
         $roles = $this->role_model->get();
@@ -522,15 +534,15 @@ class Staff extends Admin_Controller {
         //     array('check_exists', array($this->staff_model, 'valid_email_id'))
         //         )
         // );
-        
-              $this->form_validation->set_rules('employee_id', 'Staff Id', 'callback_username_check');
-              
+
+        $this->form_validation->set_rules('employee_id', 'Staff Id', 'callback_username_check');
+
         // $this->form_validation->set_rules(
         //         'employee_id', 'Staff Id', array('required','trim',
         //     array('check_exists', array($this->staff_model, 'valid_employee_id'))
         //         )
         // );
- 
+
         if ($this->form_validation->run() == FALSE) {
 
             $this->load->view('layout/header', $data);
@@ -538,12 +550,12 @@ class Staff extends Admin_Controller {
             $this->load->view('layout/footer', $data);
         } else {
 
-            $admin=$this->session->userdata('admin');
-            $centre_id=$admin['centre_id'];
+            $admin = $this->session->userdata('admin');
+            $centre_id = $admin['centre_id'];
             $employee_id = $this->input->post("employee_id");
             $department = $this->input->post("department");
             $designation = $this->input->post("designation");
-            $role = implode(',',$this->input->post("role"));
+            $role = implode(',', $this->input->post("role"));
             // var_dump($role);exit;
 
             $name = $this->input->post("name");
@@ -581,7 +593,7 @@ class Staff extends Admin_Controller {
 
             $password = $this->role->get_random_password($chars_min = 6, $chars_max = 6, $use_upper_case = false, $include_numbers = true, $include_special_chars = false);
             $data_insert = array(
-                'centre_id'=>$centre_id,
+                'centre_id' => $centre_id,
                 'password' => $this->enc_lib->passHashEnc($password),
                 'employee_id' => $employee_id,
                 'department' => $department,
@@ -621,100 +633,94 @@ class Staff extends Admin_Controller {
                 'is_active' => 1
             );
 
-            if($date_of_joining != ""){
-            $data_insert['date_of_joining'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_joining));
+            if ($date_of_joining != "") {
+                $data_insert['date_of_joining'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_joining));
             }
 
             $leave_type = $this->input->post('leave_type');
             $leave_array = array();
-            if(!empty($leave_array)){
-            foreach ($leave_type as $leave_key => $leave_value) {
-                $leave_array[] = array(
-                    'staff_id' => 0,
-                    'leave_type_id' => $leave_value,
-                    'alloted_leave' => $this->input->post('alloted_leave_' . $leave_value)
-                );
+            if (!empty($leave_array)) {
+                foreach ($leave_type as $leave_key => $leave_value) {
+                    $leave_array[] = array(
+                        'staff_id' => 0,
+                        'leave_type_id' => $leave_value,
+                        'alloted_leave' => $this->input->post('alloted_leave_' . $leave_value)
+                    );
+                }
             }
-            }
-            $role_array = array('role_id' => implode(',',$this->input->post('role')), 'staff_id' => 0);
+            $role_array = array('role_id' => implode(',', $this->input->post('role')), 'staff_id' => 0);
             // var_dump($role_array);exit;
             $insert_id = $this->staff_model->batchInsert($data_insert, $role_array, $leave_array);
             $staff_id = $insert_id;
-            
-            $prev_inst= $this->input->post("pre_inst");
-			$specialization=$this->input->post("inst_special");
-			$datefrm=$this->input->post("spfrm");
-			$dateto=$this->input->post("spto");
-			
-			$training_name= $this->input->post("training_name");
-			$trfrm=$this->input->post("trfrm");
-			$trto=$this->input->post("trto");
-			
-			$cert_pgm= $this->input->post("cert_pgm");
-			$crfrm=$this->input->post("crfrm");
-			$crto=$this->input->post("crto");
-			 
-		    $this->staff_model->delSpecialization($staff_id);
-			for($i=0;$i<count($prev_inst);$i++)
-        	{
-           		if(isset($prev_inst[$i]))
-           		{
-            	  $special_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'prev_instit'=>$prev_inst[$i],
-									   'specialization'=>$specialization[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($datefrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($dateto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addSpecialization($special_data);
-           		}
-			}
-			
-			
-			$this->staff_model->delTraining($staff_id);
-			for($i=0;$i<count($training_name);$i++)
-        	{
-           		if(isset($training_name[$i]))
-           		{
-            	  $training_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'name_training'=>$training_name[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($trfrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($trto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addTraining($training_data);
-           		}
-			}
-			
-			$this->staff_model->delCertificate($staff_id);
-			for($i=0;$i<count($cert_pgm);$i++)
-        	{
-           		if(isset($cert_pgm[$i]))
-           		{
-            	  $cert_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'name_certificate'=>$cert_pgm[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($crfrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($crto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addCertificate($cert_data);
-           		}
-			}
+
+            $prev_inst = $this->input->post("pre_inst");
+            $specialization = $this->input->post("inst_special");
+            $datefrm = $this->input->post("spfrm");
+            $dateto = $this->input->post("spto");
+
+            $training_name = $this->input->post("training_name");
+            $trfrm = $this->input->post("trfrm");
+            $trto = $this->input->post("trto");
+
+            $cert_pgm = $this->input->post("cert_pgm");
+            $crfrm = $this->input->post("crfrm");
+            $crto = $this->input->post("crto");
+
+            $this->staff_model->delSpecialization($staff_id);
+            for ($i = 0; $i < count($prev_inst); $i++) {
+                if (isset($prev_inst[$i])) {
+                    $special_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'prev_instit' => $prev_inst[$i],
+                        'specialization' => $specialization[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($datefrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($dateto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addSpecialization($special_data);
+                }
+            }
+
+
+            $this->staff_model->delTraining($staff_id);
+            for ($i = 0; $i < count($training_name); $i++) {
+                if (isset($training_name[$i])) {
+                    $training_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'name_training' => $training_name[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($trfrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($trto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addTraining($training_data);
+                }
+            }
+
+            $this->staff_model->delCertificate($staff_id);
+            for ($i = 0; $i < count($cert_pgm); $i++) {
+                if (isset($cert_pgm[$i])) {
+                    $cert_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'name_certificate' => $cert_pgm[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($crfrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($crto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addCertificate($cert_data);
+                }
+            }
 
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
                 $img_name = $insert_id . '.' . $fileInfo['extension'];
                 move_uploaded_file($_FILES["file"]["tmp_name"], "./uploads/staff_images/" . $img_name);
-                $data_img = array('id' => $staff_id, 'image' => 'uploads/staff_images/' .$img_name);
+                $data_img = array('id' => $staff_id, 'image' => 'uploads/staff_images/' . $img_name);
                 $this->staff_model->add($data_img);
             }
 
@@ -727,7 +733,7 @@ class Staff extends Admin_Controller {
                 $first_title = 'resume';
                 $filename = "resume" . $staff_id . '.' . $fileInfo['extension'];
                 $img_name = $uploaddir . $filename;
-                $resume = 'uploads/staff_images/' .$filename ;
+                $resume = 'uploads/staff_images/' . $filename;
                 move_uploaded_file($_FILES["first_doc"]["tmp_name"], $img_name);
             } else {
 
@@ -743,7 +749,7 @@ class Staff extends Admin_Controller {
                 $first_title = 'joining_letter';
                 $filename = "joining_letter" . $staff_id . '.' . $fileInfo['extension'];
                 $img_name = $uploaddir . $filename;
-                $joining_letter = 'uploads/staff_images/' .$filename ;
+                $joining_letter = 'uploads/staff_images/' . $filename;
                 move_uploaded_file($_FILES["second_doc"]["tmp_name"], $img_name);
             } else {
 
@@ -759,7 +765,7 @@ class Staff extends Admin_Controller {
                 $first_title = 'resignation_letter';
                 $filename = "resignation_letter" . $staff_id . '.' . $fileInfo['extension'];
                 $img_name = $uploaddir . $filename;
-                $resignation_letter = 'uploads/staff_images/' .$filename ;
+                $resignation_letter = 'uploads/staff_images/' . $filename;
                 move_uploaded_file($_FILES["third_doc"]["tmp_name"], $img_name);
             } else {
 
@@ -771,7 +777,7 @@ class Staff extends Admin_Controller {
                     die("Error creating folder $uploaddir");
                 }
                 $fileInfo = pathinfo($_FILES["fourth_doc"]["name"]);
-                $fourth_title = 'uploads/staff_images/' .'Other Doucment';
+                $fourth_title = 'uploads/staff_images/' . 'Other Doucment';
                 $fourth_doc = "otherdocument" . $staff_id . '.' . $fileInfo['extension'];
                 $img_name = $uploaddir . $fourth_doc;
                 move_uploaded_file($_FILES["fourth_doc"]["tmp_name"], $img_name);
@@ -805,29 +811,30 @@ class Staff extends Admin_Controller {
 
     public function username_check($str)
     {
-        if(empty($str)){
-        $this->form_validation->set_message('username_check', 'Staff ID field is required');
-        return false;
-        }else{
-          
-          $result = $this->staff_model->valid_employee_id($str);
-          if($result == false){
-            
+        if (empty($str)) {
+            $this->form_validation->set_message('username_check', 'Staff ID field is required');
             return false;
-          }
-            return true ;
+        } else {
+
+            $result = $this->staff_model->valid_employee_id($str);
+            if ($result == false) {
+
+                return false;
+            }
+            return true;
         }
     }
 
-    function edit($id) {
+    function edit($id)
+    {
         if (!$this->rbac->hasPrivilege('staff', 'can_edit')) {
             access_denied();
         }
-          $a = 0 ;
-          $sessionData = $this->session->userdata('admin');
-            $userdata = $this->customlib->getUserData();
-            
-        
+        $a = 0;
+        $sessionData = $this->session->userdata('admin');
+        $userdata = $this->customlib->getUserData();
+
+
         $data['title'] = 'Edit Staff';
         $data['id'] = $id;
         $genderList = $this->customlib->getGender();
@@ -850,26 +857,25 @@ class Staff extends Admin_Controller {
         // var_dump($staff);exit;
         $data['staff'] = $staff;
         $data["contract_type"] = $this->contract_type;
-        $staff_speciality= $this->staff_model->getSpeciality($id);
-		$data['speciality']=$staff_speciality;
-		$staff_training= $this->staff_model->getTraining($id);
-		$data['training']=$staff_training;
-		$staff_certificate= $this->staff_model->getCertificate($id);
-		$data['certificate']=$staff_certificate;
+        $staff_speciality = $this->staff_model->getSpeciality($id);
+        $data['speciality'] = $staff_speciality;
+        $staff_training = $this->staff_model->getTraining($id);
+        $data['training'] = $staff_training;
+        $staff_certificate = $this->staff_model->getCertificate($id);
+        $data['certificate'] = $staff_certificate;
 
-             if($staff["role_id"] == 7){
-                $a = 0;
-                if($userdata["email"] == $staff["email"]){
-                    $a = 1;    
-                }
-            }else{
-                $a = 1 ;
+        if ($staff["role_id"] == 7) {
+            $a = 0;
+            if ($userdata["email"] == $staff["email"]) {
+                $a = 1;
             }
+        } else {
+            $a = 1;
+        }
 
-            if($a != 1){
-                access_denied();
-
-            }
+        if ($a != 1) {
+            access_denied();
+        }
         $staffLeaveDetails = $this->staff_model->getLeaveDetails($id);
         $data['staffLeaveDetails'] = $staffLeaveDetails;
 
@@ -899,12 +905,12 @@ class Staff extends Admin_Controller {
             $this->load->view('admin/staff/staffedit', $data);
             $this->load->view('layout/footer', $data);
         } else {
-            $admin=$this->session->userdata('admin');
-            $centre_id=$admin['centre_id'];
+            $admin = $this->session->userdata('admin');
+            $centre_id = $admin['centre_id'];
             $employee_id = $this->input->post("employee_id");
             $department = $this->input->post("department");
             $designation = $this->input->post("designation");
-            $role = implode(',',$this->input->post("role"));
+            $role = implode(',', $this->input->post("role"));
             $name = $this->input->post("name");
             $gender = $this->input->post("gender");
             $marital_status = $this->input->post("marital_status");
@@ -914,7 +920,7 @@ class Staff extends Admin_Controller {
             $email = $this->input->post("email");
             $date_of_joining = $this->input->post("date_of_joining");
             $date_of_leaving = $this->input->post("date_of_leaving");
-          
+
             $address = $this->input->post("address");
             $qualification = $this->input->post("qualification");
             $work_exp = $this->input->post("work_exp");
@@ -941,7 +947,8 @@ class Staff extends Admin_Controller {
             $epf_no = $this->input->post("epf_no");
 
 
-            $data1 = array('id' => $id,
+            $data1 = array(
+                'id' => $id,
                 'employee_id' => $employee_id,
                 'department' => $department,
                 'designation' => $designation,
@@ -953,8 +960,8 @@ class Staff extends Admin_Controller {
                 'email' => $email,
                 'dob' => date('Y-m-d', $this->customlib->datetostrtotime($dob)),
                 'marital_status' => $marital_status,
-          
-           
+
+
                 'local_address' => $address,
                 'permanent_address' => $permanent_address,
                 'note' => $note,
@@ -978,21 +985,21 @@ class Staff extends Admin_Controller {
                 'linkedin' => $linkedin,
                 'instagram' => $instagram,
             );
-              if($date_of_joining != ""){
-            $data1['date_of_joining'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_joining));
-            }else{
-            $data1['date_of_joining'] = "";
+            if ($date_of_joining != "") {
+                $data1['date_of_joining'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_joining));
+            } else {
+                $data1['date_of_joining'] = "";
             }
 
-               if($date_of_leaving != ""){
-            $data1['date_of_leaving'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_leaving));
-            }else{
-$data1['date_of_leaving'] = "";
+            if ($date_of_leaving != "") {
+                $data1['date_of_leaving'] = date('Y-m-d', $this->customlib->datetostrtotime($date_of_leaving));
+            } else {
+                $data1['date_of_leaving'] = "";
             }
-            
+
             $insert_id = $this->staff_model->add($data1);
 
-            $role_id = implode(',',$this->input->post("role"));
+            $role_id = implode(',', $this->input->post("role"));
 
             $role_data = array('staff_id' => $id, 'role_id' => $role_id);
 
@@ -1008,14 +1015,16 @@ $data1['date_of_leaving'] = "";
 
                     if (!empty($altid[$i])) {
 
-                        $data2 = array('staff_id' => $id,
+                        $data2 = array(
+                            'staff_id' => $id,
                             'leave_type_id' => $leave_type[$i],
                             'id' => $altid[$i],
                             'alloted_leave' => $alloted_leave[$i],
                         );
                     } else {
 
-                        $data2 = array('staff_id' => $id,
+                        $data2 = array(
+                            'staff_id' => $id,
                             'leave_type_id' => $leave_type[$i],
                             'alloted_leave' => $alloted_leave[$i],
                         );
@@ -1025,78 +1034,72 @@ $data1['date_of_leaving'] = "";
                     $i++;
                 }
             }
-            
-            
-            $staff_id=$id;
-			$prev_inst= $this->input->post("pre_inst");
-			$specialization=$this->input->post("inst_special");
-			$datefrm=$this->input->post("spfrm");
-			$dateto=$this->input->post("spto");
-			
-			$training_name= $this->input->post("training_name");
-			$trfrm=$this->input->post("trfrm");
-			$trto=$this->input->post("trto");
-			
-			$cert_pgm= $this->input->post("cert_pgm");
-			$crfrm=$this->input->post("crfrm");
-			$crto=$this->input->post("crto");
-			 
-		    $this->staff_model->delSpecialization($staff_id);
-			for($i=0;$i<count($prev_inst);$i++)
-        	{
-           		if(isset($prev_inst[$i]))
-           		{
-            	  $special_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'prev_instit'=>$prev_inst[$i],
-									   'specialization'=>$specialization[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($datefrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($dateto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addSpecialization($special_data);
-           		}
-			}
-			
-			
-			$this->staff_model->delTraining($staff_id);
-			for($i=0;$i<count($training_name);$i++)
-        	{
-           		if(isset($training_name[$i]))
-           		{
-            	  $training_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'name_training'=>$training_name[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($trfrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($trto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addTraining($training_data);
-           		}
-			}
-			
-			$this->staff_model->delCertificate($staff_id);
-			for($i=0;$i<count($cert_pgm);$i++)
-        	{
-           		if(isset($cert_pgm[$i]))
-           		{
-            	  $cert_data=array(
-				  					   'staff_id'=>$staff_id,
-				  					   'centre_id'=>$centre_id,
-									   'employee_id'=>$employee_id,
-									   'name_certificate'=>$cert_pgm[$i],
-									   'datefrom'=>date('Y-m-d', $this->customlib->datetostrtotime($crfrm[$i])),
-									   'dateto'=>date('Y-m-d', $this->customlib->datetostrtotime($crto[$i]))
-				  );
-				  //var_dump($special_data);
-				  $this->staff_model->addCertificate($cert_data);
-           		}
-			}
-            
+
+
+            $staff_id = $id;
+            $prev_inst = $this->input->post("pre_inst");
+            $specialization = $this->input->post("inst_special");
+            $datefrm = $this->input->post("spfrm");
+            $dateto = $this->input->post("spto");
+
+            $training_name = $this->input->post("training_name");
+            $trfrm = $this->input->post("trfrm");
+            $trto = $this->input->post("trto");
+
+            $cert_pgm = $this->input->post("cert_pgm");
+            $crfrm = $this->input->post("crfrm");
+            $crto = $this->input->post("crto");
+
+            $this->staff_model->delSpecialization($staff_id);
+            for ($i = 0; $i < count($prev_inst); $i++) {
+                if (isset($prev_inst[$i])) {
+                    $special_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'prev_instit' => $prev_inst[$i],
+                        'specialization' => $specialization[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($datefrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($dateto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addSpecialization($special_data);
+                }
+            }
+
+
+            $this->staff_model->delTraining($staff_id);
+            for ($i = 0; $i < count($training_name); $i++) {
+                if (isset($training_name[$i])) {
+                    $training_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'name_training' => $training_name[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($trfrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($trto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addTraining($training_data);
+                }
+            }
+
+            $this->staff_model->delCertificate($staff_id);
+            for ($i = 0; $i < count($cert_pgm); $i++) {
+                if (isset($cert_pgm[$i])) {
+                    $cert_data = array(
+                        'staff_id' => $staff_id,
+                        'centre_id' => $centre_id,
+                        'employee_id' => $employee_id,
+                        'name_certificate' => $cert_pgm[$i],
+                        'datefrom' => date('Y-m-d', $this->customlib->datetostrtotime($crfrm[$i])),
+                        'dateto' => date('Y-m-d', $this->customlib->datetostrtotime($crto[$i]))
+                    );
+                    //var_dump($special_data);
+                    $this->staff_model->addCertificate($cert_data);
+                }
+            }
+
 
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -1174,25 +1177,26 @@ $data1['date_of_leaving'] = "";
         }
     }
 
-    function delete($id) {
+    function delete($id)
+    {
         if (!$this->rbac->hasPrivilege('staff', 'can_delete')) {
             access_denied();
         }
 
-                $a = 0 ;
-          $sessionData = $this->session->userdata('admin');
-            $userdata = $this->customlib->getUserData();
-            $staff = $this->staff_model->get($id);
-             if($staff["role_id"] == 7){
-                $a = 0;
-                if($userdata["email"] == $staff["email"]){
-                    $a = 1;    
-                }
-            }else{
-                $a = 1 ;
+        $a = 0;
+        $sessionData = $this->session->userdata('admin');
+        $userdata = $this->customlib->getUserData();
+        $staff = $this->staff_model->get($id);
+        if ($staff["role_id"] == 7) {
+            $a = 0;
+            if ($userdata["email"] == $staff["email"]) {
+                $a = 1;
             }
-        
-        if($a != 1){
+        } else {
+            $a = 1;
+        }
+
+        if ($a != 1) {
             access_denied();
         }
         $data['title'] = 'Staff List';
@@ -1200,54 +1204,57 @@ $data1['date_of_leaving'] = "";
         redirect('admin/staff');
     }
 
-    function disablestaff($id) {
+    function disablestaff($id)
+    {
         if (!$this->rbac->hasPrivilege('disable_staff', 'can_view')) {
 
             access_denied();
         }
-        $a = 0 ;
-          $sessionData = $this->session->userdata('admin');
-            $userdata = $this->customlib->getUserData();
-            $staff = $this->staff_model->get($id);
-             if($staff["role_id"] == 7){
-                $a = 0;
-                if($userdata["email"] == $staff["email"]){
-                    $a = 1;    
-                }
-            }else{
-                $a = 1 ;
+        $a = 0;
+        $sessionData = $this->session->userdata('admin');
+        $userdata = $this->customlib->getUserData();
+        $staff = $this->staff_model->get($id);
+        if ($staff["role_id"] == 7) {
+            $a = 0;
+            if ($userdata["email"] == $staff["email"]) {
+                $a = 1;
             }
-        
-        if($a != 1){
+        } else {
+            $a = 1;
+        }
+
+        if ($a != 1) {
             access_denied();
         }
         $this->staff_model->disablestaff($id);
         redirect('admin/staff/profile/' . $id);
     }
 
-    function enablestaff($id) {
+    function enablestaff($id)
+    {
 
-        $a = 0 ;
-          $sessionData = $this->session->userdata('admin');
-            $userdata = $this->customlib->getUserData();
-            $staff = $this->staff_model->get($id);
-             if($staff["role_id"] == 7){
-                $a = 0;
-                if($userdata["email"] == $staff["email"]){
-                    $a = 1;    
-                }
-            }else{
-                $a = 1 ;
+        $a = 0;
+        $sessionData = $this->session->userdata('admin');
+        $userdata = $this->customlib->getUserData();
+        $staff = $this->staff_model->get($id);
+        if ($staff["role_id"] == 7) {
+            $a = 0;
+            if ($userdata["email"] == $staff["email"]) {
+                $a = 1;
             }
-        
-        if($a != 1){
+        } else {
+            $a = 1;
+        }
+
+        if ($a != 1) {
             access_denied();
         }
         $this->staff_model->enablestaff($id);
         redirect('admin/staff/profile/' . $id);
     }
 
-    function staffLeaveSummary() {
+    function staffLeaveSummary()
+    {
 
         $resultdata = $this->staff_model->getLeaveSummary();
         $data["resultdata"] = $resultdata;
@@ -1258,7 +1265,8 @@ $data1['date_of_leaving'] = "";
         $this->load->view("layout/footer");
     }
 
-    function getEmployeeByRole() {
+    function getEmployeeByRole()
+    {
 
         $role = $this->input->post("role");
 
@@ -1267,7 +1275,8 @@ $data1['date_of_leaving'] = "";
         echo json_encode($data);
     }
 
-    function dateDifference($date_1, $date_2, $differenceFormat = '%a') {
+    function dateDifference($date_1, $date_2, $differenceFormat = '%a')
+    {
         $datetime1 = date_create($date_1);
         $datetime2 = date_create($date_2);
 
@@ -1276,7 +1285,8 @@ $data1['date_of_leaving'] = "";
         return $interval->format($differenceFormat) + 1;
     }
 
-    function permission($id) {
+    function permission($id)
+    {
         $data['title'] = 'Add Role';
         $data['id'] = $id;
         $staff = $this->staff_model->get($id);
@@ -1288,8 +1298,7 @@ $data1['date_of_leaving'] = "";
             $staff_id = $this->input->post('staff_id');
             $prev_array = $this->input->post('prev_array');
             if (!isset($prev_array)) {
-                $prev_array = array();
-                ;
+                $prev_array = array();;
             }
             $module_perm = $this->input->post('module_perm');
             $delete_array = array_diff($prev_array, $module_perm);
@@ -1316,7 +1325,8 @@ $data1['date_of_leaving'] = "";
         $this->load->view('layout/footer');
     }
 
-    public function leaverequest() {
+    public function leaverequest()
+    {
         if (!$this->rbac->hasPrivilege('apply_leave', 'can_view')) {
             access_denied();
         }
@@ -1328,7 +1338,6 @@ $data1['date_of_leaving'] = "";
 
         $data["leave_request"] = $leave_request;
 
-        // $LeaveTypes = $this->staff_model->getLeaveType();
         $LeaveTypes = $this->leaverequest_model->allotedLeaveType($userdata["id"]);
         $data["staff_id"] = $userdata["id"];
         // var_dump($LeaveTypes);exit;
@@ -1343,7 +1352,8 @@ $data1['date_of_leaving'] = "";
         $this->load->view("admin/staff/leaverequest", $data);
         $this->load->view("layout/footer", $data);
     }
-   public function superviserrequest() {
+    public function superviserrequest()
+    {
         if (!$this->rbac->hasPrivilege('superviser_leave', 'can_view')) {
             access_denied();
         }
@@ -1369,7 +1379,8 @@ $data1['date_of_leaving'] = "";
         $this->load->view("admin/staff/superviserrequest", $data);
         $this->load->view("layout/footer", $data);
     }
-	public function superviserrequestview() {
+    public function superviserrequestview()
+    {
         if (!$this->rbac->hasPrivilege('superviser_approve', 'can_view')) {
             access_denied();
         }
@@ -1377,12 +1388,12 @@ $data1['date_of_leaving'] = "";
         $this->session->set_userdata('sub_menu', 'admin/staff/superviserrequestview');
         $userdata = $this->customlib->getUserData();
 
-        
+
         // $LeaveTypes = $this->staff_model->getLeaveType();
         $LeaveTypes = $this->superviser_model->allotedLeaveType($userdata["id"]);
         $data["staff_id"] = $userdata["id"];
         $data["leavetype"] = $LeaveTypes;
-		$leave_request = $this->superviser_model->superviservi();
+        $leave_request = $this->superviser_model->superviservi();
 
         $data["leave_request"] = $leave_request;
 
@@ -1397,56 +1408,56 @@ $data1['date_of_leaving'] = "";
         $this->load->view("layout/footer", $data);
     }
 
-	
-	
 
-    function change_password($id){
+
+
+    function change_password($id)
+    {
 
         $sessionData = $this->session->userdata('admin');
-            $userdata = $this->customlib->getUserData();
+        $userdata = $this->customlib->getUserData();
 
-  $this->form_validation->set_rules('new_pass', 'New password', 'trim|required|xss_clean|matches[confirm_pass]');
+        $this->form_validation->set_rules('new_pass', 'New password', 'trim|required|xss_clean|matches[confirm_pass]');
         $this->form_validation->set_rules('confirm_pass', 'Confirm password', 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
 
             $msg = array(
                 'new_pass' => form_error('new_pass'),
                 'confirm_pass' => form_error('confirm_pass'),
-                
+
             );
 
-            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');      
-        }else{
+            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
+        } else {
 
-        if(!empty($id)){
-            $newdata = array(
-                'id' => $id,
-                'password' => $this->enc_lib->passHashEnc($this->input->post('new_pass'))
-            );
+            if (!empty($id)) {
+                $newdata = array(
+                    'id' => $id,
+                    'password' => $this->enc_lib->passHashEnc($this->input->post('new_pass'))
+                );
 
 
-              $query2 = $this->admin_model->saveNewPass($newdata);
-               if ($query2) {
-             $array = array('status' => 'success', 'error' => '', 'message' => "Password Changed Successfully");
-                    
+                $query2 = $this->admin_model->saveNewPass($newdata);
+                if ($query2) {
+                    $array = array('status' => 'success', 'error' => '', 'message' => "Password Changed Successfully");
                 } else {
 
-             $array = array('status' => 'fail', 'error' => '', 'message' => "Password Not Changed");
-                    
+                    $array = array('status' => 'fail', 'error' => '', 'message' => "Password Not Changed");
                 }
-            }else{
+            } else {
                 $array = array('status' => 'fail', 'error' => '', 'message' => "Password Not Changed");
-             
-
             }
+        }
 
-           
+        echo json_encode($array);
+    }
 
-        } 
 
-              echo json_encode($array);   
-           }
+    public function getleavemethod()
+    {
+        $id = $this->input->post('id');
+        $method = $this->db->select('method')->where('id', $id)->get('leave_types')->row()->method;
 
+        echo json_encode($method);
+    }
 }
-
-?>

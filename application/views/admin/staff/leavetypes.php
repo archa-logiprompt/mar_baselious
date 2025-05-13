@@ -12,7 +12,6 @@
     <section class="content-header">
         <h1><i class="fa fa-sitemap"></i> <?php echo $this->lang->line('human_resource'); ?></h1>
     </section>
-    <!-- Main content -->
     <section class="content">
         <div class="row">   
 
@@ -43,27 +42,27 @@
                                     }
                                     ?>" />
                                 </div>
-                                <!--div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo $this->lang->line('active'); ?> <?php echo $this->lang->line('status'); ?></label>
-                                <br/>
-                                <label class="radio-inline">
-                                     <input type="radio" checked value="yes" <?php
-                            if ((isset($result)) && ($result["is_active"] == "yes")) {
-                                echo "checked";
-                            }
-                                    ?> name="status"><?php echo $this->lang->line('yes'); ?>
-                                 </label>
-                                <label class="radio-inline">
-                                <input type="radio" value="no" <?php
-                            if ((isset($result)) && ($result["is_active"] == "no")) {
-                                echo "checked";
-                            }
-                            ?> name="status"><?php echo $this->lang->line('no'); ?>
-                            </label>
-                              </div-->
+                                <div class="mb-3">
+                        <label class="form-label">Leave Method <span style="color: red;">*</span></label> &nbsp;&nbsp; <br>
+                        <?php 
+$selected_methods = array();
+if (isset($result['method'])) {
+    $selected_methods = explode(',', $result['method']);
+}
+?>
 
-                            </div>
-                            <div class="box-footer">
+<input type="checkbox" class="form-check-input" name="method[]" id="method_half" value="half day"
+    <?php echo in_array('half day', $selected_methods) ? 'checked' : ''; ?>> Half Day
+
+&nbsp;&nbsp;
+
+<input type="checkbox" class="form-check-input" name="method[]" id="method_full" value="full day"
+    <?php echo in_array('full day', $selected_methods) ? 'checked' : ''; ?>> Full Day
+
+               </div>
+                 </div>
+                        <br>   
+                         <div class="box-footer">
                                 <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                             </div>
                         </form>
@@ -93,8 +92,8 @@ if ($this->rbac->hasPrivilege('leave_types', 'can_add')) {
                                     <tr>
 
                                         <th><?php echo $this->lang->line('leave'); ?> <?php echo $this->lang->line('name'); ?></th>
-                                     <!--    <th><?php echo $this->lang->line('active'); ?> <?php echo $this->lang->line('status'); ?></th>
-                                        -->   <th class="text-right no-print"><?php echo $this->lang->line('action'); ?>
+                                        <th class="text-right no-print">method </th>
+                                        <th class="text-right no-print"><?php echo $this->lang->line('action'); ?>
                                         </th>
                                     </tr>
                                 </thead>
@@ -114,8 +113,23 @@ if ($this->rbac->hasPrivilege('leave_types', 'can_add')) {
                                         <tr>
 
                                             <td class="mailbox-name"> <?php echo $value['type'] ?></td>
-                                     <!--        <td><?php echo $this->lang->line($value['is_active']) ?></td>
-                                            -->       <td class="mailbox-date pull-right no-print">
+                                            <td>
+  <?php 
+    if (!empty($value['method'])) {
+        $methods = explode(',', $value['method']);
+        $count = count($methods);
+        foreach ($methods as $i => $m) {
+            echo '<span>' . ucwords(trim($m)) . '</span>';
+            if ($i < $count - 1) {
+                echo ', ';
+            }
+        }
+    } else {
+        echo '-';
+    }
+  ?>
+</td>
+                                       <td class="mailbox-date pull-right no-print">
                                         <?php if ($this->rbac->hasPrivilege('leave_types', 'can_edit')) { ?>
                                                     <a href="<?php echo base_url(); ?>admin/leavetypes/leaveedit/<?php echo $value['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                         <i class="fa fa-pencil"></i>
